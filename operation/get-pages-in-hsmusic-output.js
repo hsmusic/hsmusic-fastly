@@ -45,16 +45,27 @@ for (let [dirname, filepaths] of Map.groupBy(paths, hsmusicDirname)) {
   const filenames = new Set(filepaths.map(p => path.basename(p)));
   const has = filenames.has.bind(filenames);
 
+  filepaths = new Set(filepaths);
+
+  const drop = filename => {
+    for (const p of filepaths) {
+      if (path.basename(p) === filename) {
+        filepaths.delete(p);
+      }
+    }
+  };
+
+  drop('.DS_Store');
+
   if (has('index.html') && has('oembed.json')) {
+    drop('index.html');
+    drop('oembed.json');
     result[dirname + '/'] = 'localized-with-oembed';
     resultCount['localized-with-oembed']++;
-    continue;
-  }
-
-  if (has('index.html')) {
+  } else if (has('index.html')) {
+    drop('index.html');
     result[dirname + '/'] = 'localized';
     resultCount['localized']++;
-    continue;
   }
 
   for (const filepath of filepaths) {
