@@ -1,0 +1,14 @@
+{
+  "type": "module",
+  "dependencies": {
+    "fastly": "^15.1.0"
+  },
+  "imports": {
+    "#authenticate-fastly": "./secret/authenticate-fastly.js",
+    "#fastly-services": "./secret/fastly-services.js",
+    "#iterate-pages": "./util/iterate-pages.js",
+    "#progress": "./util/progress.js",
+    "#result": "./util/result.js",
+    "#traverse": "./util/traverse.js"
+  }
+}
