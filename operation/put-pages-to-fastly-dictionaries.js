@@ -13,7 +13,6 @@ if (!(service_code in services)) {
 }
 
 const service_id = services[service_code].id;
-const version_id = services[service_code].version;
 
 const max_dictionary_size = 1000;
 
