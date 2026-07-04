@@ -44,7 +44,31 @@ const dictionaryRoom =
 
 const ops = [];
 
+const staticVersionRegex = /^\/static-(\d+)[a-z]\d+/;
+const staticVersion =
+  Iterator.from(hsmusicKeys)
+    .map(path => path.match(staticVersionRegex))
+    .filter(Boolean)
+    .next().value?.at(1);
+
+let keptStaticFiles = 0;
+const keepStaticFile = key => {
+  if (!staticVersion) return false;
+
+  const v = key.match(staticVersionRegex)?.at(1);
+  if (v && v === staticVersion) {
+    keptStaticFiles++;
+    return true;
+  }
+
+  return false;
+};
+
 for (const key of Object.keys(fastlyResult.all).sort()) {
+  const keep =
+    hsmusicKeys.includes(key) ||
+    keepStaticFile(key);
+
   const deleteFromDictionaries =
     (hsmusicKeys.includes(key)
       ? inverse[key].slice(1)
@@ -105,6 +129,10 @@ for (const [key, value] of Object.entries(hsmusicResult)) {
       outOfRoom++;
     }
   }
+}
+
+if (keptStaticFiles >= 1) {
+  console.log(`keeping ${keptStaticFiles} older static files for main version ${staticVersion}`);
 }
 
 if (outOfRoom) {
