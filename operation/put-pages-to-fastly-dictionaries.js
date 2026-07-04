@@ -45,23 +45,29 @@ const dictionaryRoom =
 const ops = [];
 
 const staticVersionRegex = /^\/static-(\d+)[a-z]\d+/;
-const staticVersion =
+const currentStaticVersion =
   Iterator.from(hsmusicKeys)
     .map(path => path.match(staticVersionRegex))
     .filter(Boolean)
     .next().value?.at(1);
+const previousStaticVersion =
+  (currentStaticVersion && `${currentStaticVersion - 1}`);
 
-let keptStaticFiles = 0;
+let keptStaticFilesCurrent = 0;
+let keptStaticFilesPrevious = 0;
 const keepStaticFile = key => {
-  if (!staticVersion) return false;
+  if (!currentStaticVersion) return false;
 
   const v = key.match(staticVersionRegex)?.at(1);
-  if (v && v === staticVersion) {
-    keptStaticFiles++;
+  if (v === currentStaticVersion) {
+    keptStaticFilesCurrent++;
     return true;
+  } else if (v === previousStaticVersion) {
+    keptStaticFilesPrevious++;
+    return true;
+  } else {
+    return false;
   }
-
-  return false;
 };
 
 for (const key of Object.keys(fastlyResult.all).sort()) {
@@ -131,8 +137,16 @@ for (const [key, value] of Object.entries(hsmusicResult)) {
   }
 }
 
-if (keptStaticFiles >= 1) {
-  console.log(`keeping ${keptStaticFiles} older static files for main version ${staticVersion}`);
+if (keptStaticFilesCurrent >= 1) {
+  console.log(
+    `keeping ${keptStaticFilesCurrent} older static files ` +
+    `for main version ${currentStaticVersion}`);
+}
+
+if (keptStaticFilesPrevious >= 1) {
+  console.log(
+    `keeping ${keptStaticFilesPrevious} older static files ` +
+    `for main version ${previousStaticVersion}`);
 }
 
 if (outOfRoom) {
