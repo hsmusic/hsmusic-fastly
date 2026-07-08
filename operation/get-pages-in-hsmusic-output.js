@@ -29,7 +29,7 @@ let resultCount = {
 };
 
 const hsmusicDirname = p => {
-  const match = p.match(/^\/es/);
+  const match = p.match(/^\/[a-z][a-z](?=\/)/);
   if (match) {
     return hsmusicDirname(p.slice(match[0].length));
   }
