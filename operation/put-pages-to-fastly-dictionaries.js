@@ -76,7 +76,7 @@ for (const key of Object.keys(fastlyResult.all).sort()) {
     keepStaticFile(key);
 
   const deleteFromDictionaries =
-    (hsmusicKeys.includes(key)
+    (keep
       ? inverse[key].slice(1)
       : inverse[key]);
 
