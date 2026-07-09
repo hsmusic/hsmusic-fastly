@@ -1,8 +1,10 @@
 sub match_pages(STRING var.path) STRING {
   declare local var.match STRING;
 
-  if (var.path ~ "^/es(/.*)") {
-    set var.path = re.group.1;
+  # ADJUST TO AVAILABLE LANGUAGES.
+  # Preview may have more than currently present on release.
+  if (var.path ~ "^/(es|vi)(/.*)") {
+    set var.path = re.group.2;
   }
 
   set var.match = table.lookup(pages, var.path); if (var.match == "file" || var.match ~ "^localized") { return var.match; }
