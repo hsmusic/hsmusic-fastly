@@ -12,7 +12,7 @@ This repository is four things at once:
 
 ## Update the website
 
-### do a build (and put it into object storage)
+### do a build
 
 > [!NOTE]
 > HEY! Have you thought about updating the wiki cachebust?
@@ -46,7 +46,13 @@ hsmusic --urls online-media --skip-thumbs --live-dev-server
 
 # build as normal
 hsmusic --urls online-media --skip-thumbs --static-build
+```
 
+### upload the build
+
+So, the basic command follows:
+
+```
 aws s3 sync --acl public-read out <www-bucket>
 # where <www-bucket> is
 #   s3://hsmusic-release-slot1
@@ -56,9 +62,25 @@ aws s3 sync --acl public-read out <www-bucket>
 #   https://hsmusic.wiki/bucket.txt
 #   https://staging.hsmusic.wiki/bucket.txt
 #   https://preview.hsmusic.wiki/bucket.txt
+```
+
+The option to see what'll happen is `--dryrun`.
+
+And an asterisk about, say, uploading to a bucket besides the active one: (This probably isn't fully "supported" in the current approach bc. the pages dictionary, see below, only exists once per service, so since updating the items in the pages dictionary isn't instantaneous, it will always at some point in this process be out of sync with the live bucket - even if you upload the actual files to a non-live bucket. Yippee)
+
+```
 # to UPDATE which bucket relase and staging point to
 # (or any other service), change the "bucket" item
 # in its "bucket" dictionary to the desired bucket.
+```
+
+In any event though, it's wise to upload the "static" folder first, because it's versioned and fresh HTML will usually depend on a folder that doesn't yet exist. If you're uploading to a live bucket then that HTML, counting right away on new CSS/JS, will be accessible before `aws s3 sync` alphabetically reaches "static".
+
+```
+aws s3 sync --acl public-read out/static-5p15 s3://hsmusic-preview/static-5p15
+# you do have to double the name of the "static" directory,
+# include it in both source and destiantion - aws s3 sync
+# doesn't follow the same path rules as rsync. annoying!
 ```
 
 ### catch the pages dictionary up to date
